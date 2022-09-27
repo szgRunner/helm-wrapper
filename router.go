@@ -64,7 +64,7 @@ func RegisterRouter(router *gin.Engine) {
 	releases := router.Group("/api/namespaces/:namespace/releases")
 	{
 		// helm list releases ->  helm list
-		releases.GET("", listReleases)
+		releases.POST("", listReleases)
 		// helm get
 		releases.GET("/:release", showReleaseInfo)
 		// helm install
