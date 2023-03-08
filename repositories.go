@@ -29,6 +29,10 @@ type repoChartElement struct {
 	Version     string `json:"version"`
 	AppVersion  string `json:"app_version"`
 	Description string `json:"description"`
+	CateGory    string `json:"category"`
+	Maintainer  string `json:"maintainer"`
+	DeployMode string `json:"deploy_mode"`
+	ResourceType string `json:"resource_type"`
 }
 
 type repoChartList []repoChartElement
@@ -223,12 +227,24 @@ func listRepoCharts(c *gin.Context) {
 	}
 	chartList := make(repoChartList, 0, len(data))
 	for _, v := range data {
-		chartList = append(chartList, repoChartElement{
-			Name:        v.Name,
-			Version:     v.Chart.Version,
-			AppVersion:  v.Chart.AppVersion,
-			Description: v.Chart.Description,
-		})
+		if category, ok := v.Chart.Annotations["category"];ok {
+			if maintainer, ok := v.Chart.Annotations["maintainer"];ok {
+				if resourceType, ok := v.Chart.Annotations["resourcetype"];ok {
+					if deployMode, ok := v.Chart.Annotations["deploymode"]; ok {
+						chartList = append(chartList, repoChartElement{
+							Name:         v.Name,
+							Version:      v.Chart.Version,
+							AppVersion:   v.Chart.AppVersion,
+							Description:  v.Chart.Description,
+							CateGory:     category,
+							Maintainer:   maintainer,
+							ResourceType: resourceType,
+							DeployMode:   deployMode,
+						})
+					}
+				}
+			}
+		}
 	}
 
 	respOK(c, chartList)
